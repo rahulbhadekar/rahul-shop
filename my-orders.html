@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders - RAHUL.SHOP</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .order-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .order-card h2 {
+            margin-top: 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .track-btn {
+            margin-top: 15px;
+            padding: 10px 18px;
+            border: none;
+            background: #222;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>📦 My Orders</h1>
+
+    <div id="orders">
+
+        Loading orders...
+
+    </div>
+
+</div>
+
+<script src="auth.js"></script>
+
+<script>
+
+function loadOrders() {
+
+    authFetch("http://localhost:8080/api/orders")
+
+        .then(response => response.json())
+
+        .then(orders => {
+
+            const ordersContainer =
+                document.getElementById("orders");
+
+            ordersContainer.innerHTML = "";
+
+
+            if (orders.length === 0) {
+
+                ordersContainer.innerHTML =
+                    "<p>No orders found.</p>";
+
+                return;
+
+            }
+
+
+            orders.forEach(order => {
+
+                const orderCard =
+                    document.createElement("div");
+
+                orderCard.classList.add("order-card");
+
+
+                orderCard.innerHTML = `
+
+                    <h2>
+                        Order #${order.id}
+                    </h2>
+
+                    <p>
+                        <strong>Customer:</strong>
+                        ${order.customerName}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        ${order.customerEmail}
+                    </p>
+
+                    <p>
+                        <strong>Total Amount:</strong>
+                        ₹${order.totalAmount}
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="status">
+                            ${order.status}
+                        </span>
+                    </p>
+
+                    <button
+                        class="track-btn"
+                        onclick="trackOrder(${order.id})">
+
+                        Track Order
+
+                    </button>
+
+                `;
+
+
+                ordersContainer.appendChild(orderCard);
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Orders Loading Error:",
+                error
+            );
+
+        });
+
+}
+
+
+
+function trackOrder(id) {
+
+    window.location.href =
+        `order-tracking.html?id=${id}`;
+
+}
+
+
+loadOrders();
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details - RAHUL.SHOP</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #013f59;
+            color: white;
+            padding: 20px 50px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        /* PRODUCT DETAILS */
+
+        .product-details {
+            max-width: 1000px;
+            margin: 60px auto;
+
+            background: white;
+
+            padding: 40px;
+
+            display: flex;
+
+            gap: 50px;
+
+            border-radius: 10px;
+        }
+
+        /* IMAGE */
+
+        .product-image {
+            width: 45%;
+        }
+
+        .product-image img {
+            width: 100%;
+
+            max-height: 450px;
+
+            object-fit: contain;
+        }
+
+        /* PRODUCT INFO */
+
+        .product-info {
+            flex: 1;
+
+            padding-top: 30px;
+        }
+
+        .product-info h1 {
+            font-size: 35px;
+
+            margin-bottom: 20px;
+        }
+
+        .price {
+            font-size: 28px;
+
+            font-weight: bold;
+
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 18px;
+
+            line-height: 1.6;
+
+            margin-bottom: 30px;
+        }
+
+        /* ADD TO CART */
+
+        .cart-btn {
+            background: #013f59;
+
+            color: white;
+
+            border: none;
+
+            padding: 15px 30px;
+
+            font-size: 18px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+        .cart-btn:hover {
+            background: #025d80;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .product-details {
+                margin: 20px;
+
+                padding: 20px;
+
+                flex-direction: column;
+            }
+
+            .product-image {
+                width: 100%;
+            }
+
+            .product-info {
+                padding-top: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="logo">
+            RAHUL.SHOP
+        </div>
+
+        <a href="index.html" class="back-btn">
+            ← Back to Shop
+        </a>
+
+    </header>
+
+
+
+    <!-- PRODUCT DETAILS -->
+
+    <div class="product-details">
+
+
+        <!-- PRODUCT IMAGE -->
+
+        <div class="product-image">
+
+            <img id="productImage" src="" alt="Product">
+
+        </div>
+
+
+
+        <!-- PRODUCT INFORMATION -->
+
+        <div class="product-info">
+
+
+            <h1 id="productName">
+                Loading...
+            </h1>
+
+
+            <div class="price" id="productPrice">
+                ₹0
+            </div>
+
+
+            <p class="description" id="productDescription">
+                Loading product description...
+            </p>
+
+
+            <button class="cart-btn" id="addToCartBtn">
+
+                🛒 Add to Cart
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- AUTH JS -->
+
+    <script src="auth.js"></script>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        // =====================================
+        // GET PRODUCT ID FROM URL
+        // =====================================
+
+        const urlParams =
+            new URLSearchParams(window.location.search);
+
+        const productId =
+            urlParams.get("id");
+
+
+
+        // =====================================
+        // GET PRODUCT FROM BACKEND
+        // =====================================
+
+        fetch(`http://localhost:8080/api/products/${productId}`)
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Product not found");
+                }
+
+                return response.json();
+
+            })
+
+            .then(product => {
+
+
+                console.log("Product Details:", product);
+
+
+
+                // Display Product Image
+
+                document.getElementById("productImage").src =
+                    product.imageUrl;
+
+
+
+                // Display Product Name
+
+                document.getElementById("productName").textContent =
+                    product.name;
+
+
+
+                // Display Product Price
+
+                document.getElementById("productPrice").textContent =
+                    "₹" + product.price;
+
+
+
+                // Display Description
+
+                document.getElementById("productDescription").textContent =
+                    product.description;
+
+
+
+                // =====================================
+                // ADD TO CART
+                // =====================================
+
+                const addToCartBtn =
+                    document.getElementById("addToCartBtn");
+
+
+                addToCartBtn.addEventListener("click", () => {
+
+
+                    // Check Login
+
+                    if (!isLoggedIn()) {
+
+                        alert("Please login first!");
+
+                        window.location.href = "login.html";
+
+                        return;
+                    }
+
+
+
+                    // Cart item object
+
+                    const cartItem = {
+
+                        productId: product.id,
+
+                        productName: product.name,
+
+                        price: product.price,
+
+                        imageUrl: product.imageUrl,
+
+                        quantity: 1
+
+                    };
+
+
+
+                    console.log("Sending to Cart:", cartItem);
+
+
+
+                    // =====================================
+                    // SEND PRODUCT TO SPRING BOOT
+                    // JWT TOKEN WILL BE ADDED BY authFetch()
+                    // =====================================
+
+                    authFetch("http://localhost:8080/api/cart", {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type": "application/json"
+
+                        },
+
+                        body: JSON.stringify(cartItem)
+
+                    })
+
+                        .then(response => {
+
+                            if (!response.ok) {
+
+                                if (response.status === 403) {
+                                    throw new Error(
+                                        "Access denied. Please login again."
+                                    );
+                                }
+
+                                throw new Error(
+                                    "Failed to add product to cart"
+                                );
+                            }
+
+                            return response.json();
+
+                        })
+
+                        .then(data => {
+
+                            console.log("Added to Cart:", data);
+
+                            alert("Product added to cart! 🛒");
+
+                        })
+
+                        .catch(error => {
+
+                            console.error(
+                                "Cart Error:",
+                                error
+                            );
+
+                            alert(error.message);
+
+                        });
+
+
+                });
+
+
+            })
+
+
+            .catch(error => {
+
+                console.error(
+                    "Error loading product:",
+                    error
+                );
+
+            });
+
+
+    </script>
+
+
+</body>
+
+</html>

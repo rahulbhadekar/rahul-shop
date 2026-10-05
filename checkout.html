@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - RAHUL.SHOP</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #013f59;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+        }
+
+        .checkout-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            padding: 15px;
+            background: #013f59;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .place-order-btn:hover {
+            background: #025d80;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header class="header">
+
+        <div class="logo">
+            RAHUL.SHOP
+        </div>
+
+        <a href="cart.html" class="back-btn">
+            ← Back to Cart
+        </a>
+
+    </header>
+
+
+    <div class="checkout-container">
+
+        <h1>🛒 Checkout</h1>
+
+
+        <form id="checkoutForm">
+
+            <div class="form-group">
+
+                <label>
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Enter your name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="customerEmail"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Address
+                </label>
+
+                <textarea
+                    id="customerAddress"
+                    placeholder="Enter your address"
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="total" id="totalAmount">
+                Total: ₹0
+            </div>
+
+
+            <button
+                type="submit"
+                class="place-order-btn"
+            >
+                Place Order
+            </button>
+
+        </form>
+
+    </div>
+
+    <script src="auth.js"></script>
+
+
+    <script>
+
+        let cartTotal = 0;
+
+
+        // ===============================
+        // GET CART TOTAL
+        // ===============================
+
+        authFetch("http://localhost:8080/api/cart")
+
+            .then(response => response.json())
+
+            .then(cartItems => {
+
+                cartTotal = 0;
+
+                cartItems.forEach(item => {
+
+                    cartTotal +=
+                        item.price * item.quantity;
+
+                });
+
+
+                document.getElementById("totalAmount")
+                    .textContent =
+                    "Total: ₹" + cartTotal;
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Cart Error:",
+                    error
+                );
+
+            });
+
+
+        // ===============================
+        // PLACE ORDER
+        // ===============================
+
+        document.getElementById("checkoutForm")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+
+                const order = {
+
+                    customerName:
+                        document.getElementById("customerName").value,
+
+                    customerEmail:
+                        document.getElementById("customerEmail").value,
+
+                    customerAddress:
+                        document.getElementById("customerAddress").value,
+
+                    totalAmount: cartTotal,
+
+                    status: "PLACED"
+
+                };
+
+
+                console.log(
+                    "Order:",
+                    order
+                );
+
+
+                authFetch("http://localhost:8080/api/orders", {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify(order)
+
+                })
+
+                    .then(response => response.json())
+
+                    .then(data => {
+
+    console.log(
+        "Order Placed:",
+        data
+    );
+
+    // ===============================
+    // CLEAR CART
+    // ===============================
+
+    return authfetch("http://localhost:8080/api/cart", {
+        method: "DELETE"
+    });
+
+})
+
+.then(() => {
+
+    alert(
+        "Order placed successfully! 🎉"
+    );
+
+    // Go to home page
+    window.location.href = "index.html";
+
+})
+
+.catch(error => {
+
+    console.error(
+        "Order Error:",
+        error
+    );
+
+    alert(
+        "Something went wrong!"
+    );
+
+});
+
+});                   
+
+    </script>
+
+</body>
+
+</html>

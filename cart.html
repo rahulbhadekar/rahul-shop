@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Cart - RAHUL.SHOP</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #013f59;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        /* CART */
+
+        .cart-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .cart-title {
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        /* CART ITEM */
+
+        .cart-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h2 {
+            margin-bottom: 10px;
+        }
+
+        .item-price {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .quantity {
+            margin-bottom: 10px;
+        }
+
+        .remove-btn {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background: #b71c1c;
+        }
+
+        /* EMPTY CART */
+
+        .empty-cart {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        /* TOTAL */
+
+        .cart-summary {
+            background: white;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 10px;
+            text-align: right;
+        }
+
+        .total {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .checkout-btn {
+            background: #013f59;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .checkout-btn:hover {
+            background: #025d80;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .header {
+                padding: 20px;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item img {
+                width: 100%;
+                height: 200px;
+            }
+
+            .cart-summary {
+                text-align: left;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        RAHUL.SHOP
+    </div>
+
+    <a href="index.html" class="back-btn">
+        ← Continue Shopping
+    </a>
+
+</header>
+
+
+<div class="cart-container">
+
+    <h1 class="cart-title">
+        🛒 My Cart
+    </h1>
+
+    <div id="cartContainer">
+        Loading cart...
+    </div>
+
+    <div class="cart-summary">
+
+        <div class="total" id="totalPrice">
+            Total: ₹0
+        </div>
+
+        <button
+                class="checkout-btn"
+                onclick="goToCheckout()">
+
+            Proceed to Checkout
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- JWT AUTH FILE -->
+
+<script src="auth.js"></script>
+
+
+<script>
+
+    // =====================================
+    // LOAD CART
+    // =====================================
+
+    function loadCart() {
+
+        authFetch("http://localhost:8080/api/cart")
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Failed to load cart");
+                }
+
+                return response.json();
+
+            })
+
+            .then(cartItems => {
+
+                console.log("Cart Items:", cartItems);
+
+                const cartContainer =
+                    document.getElementById("cartContainer");
+
+                const totalPrice =
+                    document.getElementById("totalPrice");
+
+                // Clear old content
+
+                cartContainer.innerHTML = "";
+
+                // Empty cart
+
+                if (cartItems.length === 0) {
+
+                    cartContainer.innerHTML = `
+                        <div class="empty-cart">
+                            Your cart is empty 🛒
+                        </div>
+                    `;
+
+                    totalPrice.textContent = "Total: ₹0";
+
+                    return;
+                }
+
+
+                // Total variable
+
+                let total = 0;
+
+
+                // Display products
+
+                cartItems.forEach(item => {
+
+                    // Calculate total
+
+                    total += item.price * item.quantity;
+
+
+                    // Create cart item
+
+                    const cartItem =
+                        document.createElement("div");
+
+                    cartItem.classList.add("cart-item");
+
+
+                    cartItem.innerHTML = `
+
+                        <img
+                            src="${item.imageUrl}"
+                            alt="${item.productName}"
+                        >
+
+                        <div class="item-info">
+
+                            <h2>
+                                ${item.productName}
+                            </h2>
+
+                            <div class="item-price">
+                                ₹${item.price}
+                            </div>
+
+                            <div class="quantity">
+
+                                <button
+                                    onclick="changeQuantity(
+                                        ${item.id},
+                                        ${item.quantity - 1}
+                                    )">
+
+                                    −
+
+                                </button>
+
+                                <span style="margin: 0 15px;">
+                                    ${item.quantity}
+                                </span>
+
+                                <button
+                                    onclick="changeQuantity(
+                                        ${item.id},
+                                        ${item.quantity + 1}
+                                    )">
+
+                                    +
+
+                                </button>
+
+                            </div>
+
+                            <button
+                                class="remove-btn"
+                                onclick="removeFromCart(${item.id})">
+
+                                Remove
+
+                            </button>
+
+                        </div>
+
+                    `;
+
+
+                    cartContainer.appendChild(cartItem);
+
+                });
+
+
+                // Display total
+
+                totalPrice.textContent =
+                    "Total: ₹" + total;
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Cart Error:",
+                    error
+                );
+
+            });
+
+    }
+
+
+    // =====================================
+    // CHANGE QUANTITY
+    // =====================================
+
+    function changeQuantity(id, quantity) {
+
+        // Quantity 1 se kam nahi hogi
+
+        if (quantity < 1) {
+            return;
+        }
+
+
+        authFetch(
+            `http://localhost:8080/api/cart/${id}?quantity=${quantity}`,
+            {
+                method: "PUT"
+            }
+        )
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Quantity update failed");
+                }
+
+                return response.json();
+
+            })
+
+            .then(data => {
+
+                console.log(
+                    "Quantity Updated:",
+                    data
+                );
+
+                // Cart dobara load karo
+
+                loadCart();
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Quantity Update Error:",
+                    error
+                );
+
+            });
+
+    }
+
+
+    // =====================================
+    // REMOVE FROM CART
+    // =====================================
+
+    function removeFromCart(id) {
+
+        authFetch(
+            `http://localhost:8080/api/cart/${id}`,
+            {
+                method: "DELETE"
+            }
+        )
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Remove failed");
+                }
+
+                return response.text();
+
+            })
+
+            .then(message => {
+
+                console.log(message);
+
+                // Reload cart
+
+                loadCart();
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Remove Error:",
+                    error
+                );
+
+            });
+
+    }
+
+
+    // =====================================
+    // INITIAL LOAD
+    // =====================================
+
+    loadCart();
+
+
+    // =====================================
+    // CHECKOUT
+    // =====================================
+
+    function goToCheckout() {
+
+        window.location.href =
+            "checkout.html";
+
+    }
+
+</script>
+
+</body>
+
+</html>

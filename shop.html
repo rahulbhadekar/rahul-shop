@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shop - RAHUL.SHOP</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        /* HEADER */
+
+        header {
+            background: #013f59;
+            color: white;
+            padding: 18px 5%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav a:hover {
+            color: #ffd000;
+        }
+
+
+        /* SHOP HEADER */
+
+        .shop-header {
+            padding: 35px 5% 20px;
+            text-align: center;
+        }
+
+        .shop-header h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .shop-header p {
+            color: #666;
+        }
+
+
+        /* SEARCH + SORT */
+
+        .controls {
+            width: 90%;
+            margin: 10px auto 30px;
+
+            display: flex;
+            justify-content: space-between;
+
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        #searchInput {
+            flex: 1;
+            min-width: 250px;
+
+            padding: 14px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+        }
+
+        #sortSelect {
+            padding: 14px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            background: white;
+        }
+
+
+        /* PRODUCTS */
+
+        .products {
+            width: 90%;
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 22px;
+
+            padding-bottom: 50px;
+        }
+
+
+        /* PRODUCT CARD */
+
+        .product-card {
+            background: white;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            border: 1px solid #ddd;
+
+            transition: 0.3s;
+
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .product-card:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+
+        /* PRODUCT IMAGE */
+
+        .product-image {
+
+            width: 100%;
+
+            height: 220px;
+
+            object-fit: cover;
+
+            background: #eee;
+        }
+
+
+        /* PRODUCT INFO */
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h2 {
+
+            font-size: 19px;
+
+            margin-bottom: 8px;
+        }
+
+        .price {
+
+            color: red;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+        .description {
+
+            color: #666;
+
+            font-size: 14px;
+
+            min-height: 40px;
+        }
+
+
+        /* VIEW DETAILS BUTTON */
+
+        .details-btn {
+
+            display: block;
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 11px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #013f59;
+
+            color: white;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            font-size: 15px;
+        }
+
+        .details-btn:hover {
+
+            background: #025d80;
+        }
+
+
+        /* ADD TO CART BUTTON */
+
+        .cart-btn {
+
+            display: block;
+
+            width: 100%;
+
+            margin-top: 8px;
+
+            padding: 11px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #ff9800;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .cart-btn:hover {
+
+            background: #e68900;
+        }
+
+
+        /* LOADING */
+
+        .loading {
+
+            text-align: center;
+
+            font-size: 22px;
+
+            padding: 50px;
+
+            grid-column: 1 / -1;
+        }
+
+
+        /* NO PRODUCTS */
+
+        .no-products {
+
+            text-align: center;
+
+            padding: 50px;
+
+            font-size: 20px;
+
+            grid-column: 1 / -1;
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+
+            .products {
+
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+
+        @media (max-width: 700px) {
+
+            .products {
+
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header {
+
+                justify-content: center;
+            }
+
+            .nav {
+
+                width: 100%;
+
+                justify-content: center;
+            }
+        }
+
+
+        @media (max-width: 500px) {
+
+            .products {
+
+                grid-template-columns: 1fr;
+            }
+
+            .shop-header h1 {
+
+                font-size: 28px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="logo">
+            RAHUL.SHOP
+        </div>
+
+
+        <div class="nav">
+
+            <a href="index.html">
+                HOME
+            </a>
+
+            <a href="shop.html">
+                SHOP
+            </a>
+
+            <a href="cart.html">
+                🛒 CART
+            </a>
+
+            <a href="my-orders.html">
+                📦 MY ORDERS
+            </a>
+
+            <a href="profile.html">
+                👤 ACCOUNT
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- SHOP TITLE -->
+
+    <div class="shop-header">
+
+        <h1>
+            🛍️ RAHUL.SHOP
+        </h1>
+
+        <p>
+            Explore our latest products
+        </p>
+
+    </div>
+
+
+
+    <!-- SEARCH + SORT -->
+
+    <div class="controls">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search products..."
+        >
+
+
+        <select id="sortSelect">
+
+            <option value="default">
+                Sort Products
+            </option>
+
+            <option value="low">
+                Price: Low to High
+            </option>
+
+            <option value="high">
+                Price: High to Low
+            </option>
+
+            <option value="name">
+                Name: A to Z
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <!-- PRODUCTS -->
+
+    <div
+        class="products"
+        id="productsContainer"
+    >
+
+        <div class="loading">
+
+            Loading products... ⏳
+
+        </div>
+
+    </div>
+
+
+
+    <!-- AUTH JS -->
+
+    <script src="auth.js"></script>
+
+
+
+    <script>
+
+        let allProducts = [];
+
+
+        /* =========================
+           LOAD PRODUCTS
+        ========================= */
+
+        function loadProducts() {
+
+            fetch("http://localhost:8080/api/products")
+
+                .then(response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Products load nahi hue"
+                        );
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(products => {
+
+                    allProducts = products;
+
+                    displayProducts(allProducts);
+
+                })
+
+                .catch(error => {
+
+                    console.error(error);
+
+                    document.getElementById(
+                        "productsContainer"
+                    ).innerHTML = `
+
+                        <div class="no-products">
+
+                            ❌ Products load nahi ho rahe.
+
+                            <br><br>
+
+                            Please check Spring Boot backend.
+
+                        </div>
+
+                    `;
+
+                });
+
+        }
+
+
+
+        /* =========================
+           DISPLAY PRODUCTS
+        ========================= */
+
+        function displayProducts(products) {
+
+            const container =
+                document.getElementById(
+                    "productsContainer"
+                );
+
+
+            container.innerHTML = "";
+
+
+            if (products.length === 0) {
+
+                container.innerHTML = `
+
+                    <div class="no-products">
+
+                        😔 No products found.
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+
+            products.forEach(product => {
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.className =
+                    "product-card";
+
+
+                card.innerHTML = `
+
+                    <img
+                        class="product-image"
+
+                        src="${product.imageUrl}"
+
+                        alt="${product.name}"
+
+                        onerror="
+                            this.src='https://via.placeholder.com/500x400?text=No+Image'
+                        "
+                    >
+
+
+                    <div class="product-info">
+
+                        <h2>
+                            ${product.name}
+                        </h2>
+
+
+                        <div class="price">
+
+                            ₹${product.price}
+
+                        </div>
+
+
+                        <div class="description">
+
+                            ${product.description}
+
+                        </div>
+
+
+                        <a
+                            class="details-btn"
+
+                            href="product-details.html?id=${product.id}"
+                        >
+
+                            View Details
+
+                        </a>
+
+
+                        <button
+                            class="cart-btn"
+
+                            onclick="addToCart(${product.id})"
+                        >
+
+                            🛒 Add to Cart
+
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        document
+            .getElementById("searchInput")
+            .addEventListener(
+                "input",
+                function () {
+
+
+                    const searchText =
+                        this.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    const filteredProducts =
+                        allProducts.filter(
+                            product =>
+
+                                product.name
+                                    .toLowerCase()
+                                    .includes(searchText)
+                        );
+
+
+                    displayProducts(
+                        filteredProducts
+                    );
+
+                }
+            );
+
+
+
+        /* =========================
+           SORT
+        ========================= */
+
+        document
+            .getElementById("sortSelect")
+            .addEventListener(
+                "change",
+                function () {
+
+
+                    let products =
+                        [...allProducts];
+
+
+                    const value =
+                        this.value;
+
+
+
+                    if (value === "low") {
+
+                        products.sort(
+                            (a, b) =>
+                                a.price - b.price
+                        );
+
+                    }
+
+
+
+                    if (value === "high") {
+
+                        products.sort(
+                            (a, b) =>
+                                b.price - a.price
+                        );
+
+                    }
+
+
+
+                    if (value === "name") {
+
+                        products.sort(
+                            (a, b) =>
+                                a.name.localeCompare(
+                                    b.name
+                                )
+                        );
+
+                    }
+
+
+
+                    displayProducts(products);
+
+                }
+            );
+
+
+
+        /* =========================
+           ADD TO CART
+        ========================= */
+
+        function addToCart(productId) {
+
+
+            /* LOGIN CHECK */
+
+            if (!isLoggedIn()) {
+
+                alert(
+                    "Please login first 🔐"
+                );
+
+                window.location.href =
+                    "login.html";
+
+                return;
+            }
+
+
+
+            /* FIND PRODUCT */
+
+            const product =
+                allProducts.find(
+                    p => p.id === productId
+                );
+
+
+
+            if (!product) {
+
+                alert(
+                    "Product not found ❌"
+                );
+
+                return;
+            }
+
+
+
+            /* CART OBJECT */
+
+            const cartItem = {
+
+                productId: product.id,
+
+                productName: product.name,
+
+                price: product.price,
+
+                imageUrl: product.imageUrl,
+
+                quantity: 1
+
+            };
+
+
+
+            /* SEND TO BACKEND */
+
+            authFetch(
+                "http://localhost:8080/api/cart",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            cartItem
+                        )
+
+                }
+            )
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Could not add to cart"
+                    );
+
+                }
+
+                return response.json();
+
+            })
+
+            .then(data => {
+
+                alert(
+                    "Product added to cart 🛒"
+                );
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Add to Cart Error:",
+                    error
+                );
+
+                alert(
+                    "Product cart me add nahi hua ❌"
+                );
+
+            });
+
+        }
+
+
+
+        /* =========================
+           START
+        ========================= */
+
+        loadProducts();
+
+    </script>
+
+
+</body>
+
+</html>
