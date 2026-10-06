@@ -231,7 +231,7 @@
 
     function loadCart() {
 
-        authFetch("http://localhost:8080/api/cart")
+        authFetch("https://rahul-shop-backend.onrender.com/api/cart")
 
             .then(response => {
 
@@ -391,7 +391,7 @@
 
 
         authFetch(
-            `http://localhost:8080/api/cart/${id}?quantity=${quantity}`,
+            `https://rahul-shop-backend.onrender.com/api/cart/${id}?quantity=${quantity}`,
             {
                 method: "PUT"
             }
@@ -439,7 +439,7 @@
     function removeFromCart(id) {
 
         authFetch(
-            `http://localhost:8080/api/cart/${id}`,
+            `https://rahul-shop-backend.onrender.com/api/cart/${id}`,
             {
                 method: "DELETE"
             }

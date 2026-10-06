@@ -408,7 +408,7 @@
         function loadProducts() {
 
 
-            authFetch("http://localhost:8080/api/products")
+            authFetch("https://rahul-shop-backend.onrender.com/api/products")
 
                 .then(response => response.json())
 
@@ -501,7 +501,7 @@
 
         function loadOrders() {
 
-    authFetch("http://localhost:8080/api/orders")
+    authFetch("https://rahul-shop-backend.onrender.com/api/orders")
 
         .then(response => response.json())
 
@@ -607,7 +607,7 @@
                 };
 
 
-                authFetch("http://localhost:8080/api/products", {
+                authFetch("https://rahul-shop-backend.onrender.com/api/products", {
 
                     method: "POST",
 
@@ -661,7 +661,7 @@
 
             function editProduct(id) {
 
-    authFetch(`http://localhost:8080/api/products/${id}`)
+    authFetch(`https://rahul-shop-backend.onrender.com/api/products/${id}`)
 
         .then(response => response.json())
 
@@ -720,7 +720,7 @@ function cancelEdit() {
     };
 
 
-    authFetch(`http://localhost:8080/api/products/${id}`, {
+    authFetch(`https://rahul-shop-backend.onrender.com/api/products/${id}`, {
 
         method: "PUT",
 
@@ -775,7 +775,7 @@ function cancelEdit() {
 
 
             authFetch(
-                `http://localhost:8080/api/products/${id}`,
+                `https://rahul-shop-backend.onrender.com/api/products/${id}`,
                 {
                     method: "DELETE"
                 }
@@ -817,7 +817,7 @@ function cancelEdit() {
 
         function loadOrders() {
 
-    authFetch("http://localhost:8080/api/orders")
+    authFetch("https://rahul-shop-backend.onrender.com/api/orders")
 
         .then(response => response.json())
 
@@ -911,7 +911,7 @@ function cancelEdit() {
 function updateOrderStatus(id, status) {
 
     authFetch(
-        `http://localhost:8080/api/orders/${id}/status?status=${status}`,
+        `https://rahul-shop-backend.onrender.com/api/orders/${id}/status?status=${status}`,
         {
             method: "PUT"
         }

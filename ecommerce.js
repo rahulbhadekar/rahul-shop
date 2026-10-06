@@ -76,7 +76,7 @@ function displayProducts(products) {
 
 function loadProducts() {
 
-    fetch("http://localhost:8080/api/products")
+    fetch("https://rahul-shop-backend.onrender.com/api/products")
         .then(response => response.json())
         .then(products => {
 
@@ -108,7 +108,7 @@ searchInput.addEventListener("input", () => {
 
     // Backend search API
     fetch(
-        `http://localhost:8080/api/products/search?name=${encodeURIComponent(searchText)}`
+        `https://rahul-shop-backend.onrender.com/api/products/search?name=${encodeURIComponent(searchText)}`
     )
         .then(response => response.json())
         .then(products => {

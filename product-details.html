@@ -246,7 +246,7 @@
         // GET PRODUCT FROM BACKEND
         // =====================================
 
-        fetch(`http://localhost:8080/api/products/${productId}`)
+        fetch(`https://rahul-shop-backend.onrender.com/api/products/${productId}`)
 
             .then(response => {
 
@@ -344,7 +344,7 @@
                     // JWT TOKEN WILL BE ADDED BY authFetch()
                     // =====================================
 
-                    authFetch("http://localhost:8080/api/cart", {
+                    authFetch("https://rahul-shop-backend.onrender.com/api/cart", {
 
                         method: "POST",
 

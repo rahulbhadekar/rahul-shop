@@ -473,7 +473,7 @@
 
         function loadProducts() {
 
-            fetch("http://localhost:8080/api/products")
+            fetch("https://rahul-shop-backend.onrender.com/api/products")
 
                 .then(response => {
 
@@ -797,7 +797,7 @@
             /* SEND TO BACKEND */
 
             authFetch(
-                "http://localhost:8080/api/cart",
+                "https://rahul-shop-backend.onrender.com/api/cart",
                 {
 
                     method: "POST",
